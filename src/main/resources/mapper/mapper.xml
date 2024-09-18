@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrbonk97.hanadangdangbe.repository.mybatis.StockMapper">
+    <select id="selectStockPriceList" resultType="com.mrbonk97.hanadangdangbe.dto.StockPriceDto">
+        select A.CODE,
+               A.PRDT_ABRV_NAME,
+               NVL(A.IDX_BZTP_MCLS_CD_NAME, '기타') as IDX_BZTP_MCLS_CD_NAME,
+               B.STCK_CLPR,
+               B.acml_vol,
+               B.prdy_vrss,
+               B.prdy_vrss_sign
+        from TB_STOCK_INFO A
+                 INNER JOIN TB_STOCK_PRICE_DAILY B
+                            On A.CODE = B.CODE
+        where B.STCK_BSOP_DATE = (select STCK_BSOP_DATE
+                                  from (select STCK_BSOP_DATE from TB_STOCK_PRICE_DAILY order by STCK_BSOP_DATE desc)
+                                  where rownum = 1)
+        order by TO_NUMBER(ACML_VOL) desc
+    </select>
+</mapper>
