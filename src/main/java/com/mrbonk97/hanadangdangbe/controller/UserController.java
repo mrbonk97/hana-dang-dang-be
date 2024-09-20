@@ -45,6 +45,8 @@ public class UserController {
         User user = userService.signInUser(userSignInRequest.getUsername(), userSignInRequest.getPassword());
         Account account = accountService.getAccountByUser(user);
         log.info("유저 로그인 함 {}", user.getId());
+
         return ResponseEntity.ok(UserCreateResponse.from(user, account));
+
     }
 }

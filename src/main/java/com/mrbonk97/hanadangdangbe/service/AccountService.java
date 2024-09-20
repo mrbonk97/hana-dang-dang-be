@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -42,11 +43,13 @@ public class AccountService {
     }
 
     public Account getAccountInfo(User user) {
+        long stockBalance = 0;
         Account account = getAccountByUser(user);
         List<AccountStock> accountStockList = accountStockRepository.findAllByAccount(account);
 
         for(var e: accountStockList) {
-
+            StockDailyPrice stockDailyPrice = stockDailyPriceRepository.findTopByCodeOrderByStckBsopDateDesc(e.getStockInfo().getCode()).orElseThrow(() -> new RuntimeException("종목을 찾을 수 없음"));
+            stockBalance += Long.parseLong(stockDailyPrice.getStck_clpr()) * e.getQuantity();
         }
 
 

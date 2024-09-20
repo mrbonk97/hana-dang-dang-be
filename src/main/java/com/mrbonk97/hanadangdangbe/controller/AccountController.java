@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/account")
+@RequestMapping("/api/accounts")
 public class AccountController {
     private final AccountService accountService;
     private final StockTransactionService stockTransactionService;
@@ -27,6 +27,13 @@ public class AccountController {
     public ResponseEntity<Account> fillAccount(@PathVariable String id, @RequestBody Long amount) {
         Account account = accountService.findById(id);
         return ResponseEntity.ok(accountService.addToBalance(account, amount));
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Account> getAccountDetail(@PathVariable String id) {
+        Account account = accountService.findById(id);
+        return ResponseEntity.ok(account);
     }
 
 

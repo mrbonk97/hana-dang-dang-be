@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @Slf4j
 @Service
 public class HanTuService {
@@ -81,9 +84,21 @@ public class HanTuService {
 
     // 국내주식업종기간별시세(일/주/월/년)[v1_국내주식-021]
     public Mono<IndexValueDto> getIndexGraph(String code) {
+        // 현재 날짜 가져오기
+        LocalDate today = LocalDate.now();
+        // 일주일 전 날짜 계산
+        LocalDate weekAgo = today.minusWeeks(2);
+
+        // 날짜 포맷 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+        // 포맷된 날짜 문자열 출력
+        String _today = today.format(formatter);
+        String _weekAgo = weekAgo.format(formatter);
+
         // WebClient는 Builder 패턴 처럼 사용
         WebClient webClient = WebClient.builder().build();
-        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice?FID_COND_MRKT_DIV_CODE=U&FID_INPUT_DATE_1=20240801&FID_INPUT_DATE_2=20240918&FID_PERIOD_DIV_CODE=D&FID_INPUT_ISCD=" + code;
+        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice?FID_COND_MRKT_DIV_CODE=U&FID_INPUT_DATE_1="+ _weekAgo + "&FID_INPUT_DATE_2=" + _today + "&FID_PERIOD_DIV_CODE=D&FID_INPUT_ISCD=" + code;
         // 어떤 HTTP 메소드로 요청 보낼지를 get(), post() 메소드 등으로 결정
         // 만일 다른 메소드를 쓰고 싶다면, method()
 
