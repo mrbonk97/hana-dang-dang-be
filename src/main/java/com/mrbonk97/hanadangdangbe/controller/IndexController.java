@@ -33,6 +33,12 @@ public class IndexController {
         return ResponseEntity.ok(hanTuService.getIndexGraph(code));
     }
 
+    @GetMapping("/long/{code}")
+    public ResponseEntity<Mono<IndexValueDto>> getIndexByCode(@PathVariable String code) {
+        log.info("지수 조회함 {}",code);
+        return ResponseEntity.ok(hanTuService.getIndexGraphLong(code));
+    }
+
     @GetMapping
     public ResponseEntity<Mono<IndexListDto>> getIndexList() {
         return ResponseEntity.ok(hanTuService.getIndexList());
