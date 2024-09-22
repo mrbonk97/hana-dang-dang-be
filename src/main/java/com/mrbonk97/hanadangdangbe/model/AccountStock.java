@@ -19,5 +19,6 @@ public class AccountStock {
     private Account account;
     @ManyToOne
     private StockInfo stockInfo;
+    private Long purchasePrice;
     private Long quantity;
 }

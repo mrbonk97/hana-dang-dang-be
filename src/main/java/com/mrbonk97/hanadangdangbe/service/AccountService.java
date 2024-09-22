@@ -42,17 +42,34 @@ public class AccountService {
         return accountRepository.findByUser(user).orElseThrow(() -> new RuntimeException("유저에게 할당된 계좌가 없습니다."));
     }
 
-    public Account getAccountInfo(User user) {
-        long stockBalance = 0;
-        Account account = getAccountByUser(user);
+    public Account getAccountInfo(String  accountId) {
+        long totalCurrentPrice = 0;
+        long totalPurchasePrice = 0;
+
+        Account account = findById(accountId);
         List<AccountStock> accountStockList = accountStockRepository.findAllByAccount(account);
 
         for(var e: accountStockList) {
-            StockDailyPrice stockDailyPrice = stockDailyPriceRepository.findTopByCodeOrderByStckBsopDateDesc(e.getStockInfo().getCode()).orElseThrow(() -> new RuntimeException("종목을 찾을 수 없음"));
-            stockBalance += Long.parseLong(stockDailyPrice.getStck_clpr()) * e.getQuantity();
+            StockDailyPrice stockDailyPrice = stockDailyPriceRepository.findTopByCodeOrderByStckBsopDateDesc(
+                    e.getStockInfo().getCode()).orElseThrow(() -> new RuntimeException("종목을 찾을 수 없음")
+            );
+
+            totalCurrentPrice += Long.parseLong(stockDailyPrice.getStck_clpr()) * e.getQuantity();
+            totalPurchasePrice += e.getPurchasePrice() * e.getQuantity();
+        }
+
+        long percentage = 0;
+        if(totalPurchasePrice != 0) {
+            percentage = Math.abs((totalCurrentPrice - totalPurchasePrice) / totalPurchasePrice * 100);
         }
 
 
+
+        account.setStockCurrentBalance(totalCurrentPrice);
+        account.setStockInitBalance(totalPurchasePrice);
+        account.setTotalBalance(account.getBalance() + totalCurrentPrice);
+        account.setProfit(totalCurrentPrice - totalPurchasePrice);
+        account.setProfitPercentage(percentage);
         return account;
     }
 
