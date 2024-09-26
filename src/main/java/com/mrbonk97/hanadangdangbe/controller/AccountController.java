@@ -33,7 +33,11 @@ public class AccountController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Account> getAccountDetail(@PathVariable String id) {
+<<<<<<< HEAD
         Account account = accountService.getAccountInfoById(id);
+=======
+        Account account = accountService.getAccountInfo(id);
+>>>>>>> origin/main
         return ResponseEntity.ok(account);
     }
 

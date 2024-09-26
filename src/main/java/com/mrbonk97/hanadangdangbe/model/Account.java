@@ -23,6 +23,19 @@ public class Account {
     private String title;
     private Long balance = 0L;
     private Long withDrawAmount = 0L;
+
+    @Transient
+    private Long stockCurrentBalance;
+    @Transient
+    private Long stockInitBalance;
+    @Transient
+    private Long totalBalance;
+    @Transient
+    private Long profit;
+    @Transient
+    private Long profitPercentage;
+
+
     @JsonIgnore
     @OneToOne
     private User user;
