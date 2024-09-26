@@ -25,29 +25,23 @@ public class Account {
     private Long withDrawAmount = 0L;
 
     @Transient
-    private Long stockCurrentBalance;
+    private Double stockCurrentBalance;
     @Transient
-    private Long stockInitBalance;
+    private Double stockInitBalance;
     @Transient
-    private Long totalBalance;
+    private Double totalBalance;
     @Transient
-    private Long profit;
+    private Double profit;
     @Transient
-    private Long profitPercentage;
+    private Double profitPercentage;
 
 
     @JsonIgnore
     @OneToOne
     private User user;
 
-    @Transient
-    private Long totalBalance = 0L;
-    @Transient
-    private Long stockInitBalance = 0L;
-    @Transient
-    private Long stockCurrentBalance = 0L;
-    @Transient
-    private Long stockProfit = 0L;
+
+
 
     @Override
     public boolean equals(Object o) {

@@ -24,20 +24,15 @@ public class AccountController {
         return ResponseEntity.ok(stockTransactionService.findRecentActivity(account));
     }
 
-    @PutMapping("/{id}/fill")
-    public ResponseEntity<Account> fillAccount(@PathVariable String id, @RequestBody Long amount) {
-        Account account = accountService.findById(id);
-        return ResponseEntity.ok(accountService.addToBalance(account, amount));
+    @GetMapping("/{id}/fill")
+    public ResponseEntity<Account> fillAccount(@PathVariable String id, @RequestParam Long amount) {
+        return ResponseEntity.ok(accountService.addToBalance(id, amount));
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<Account> getAccountDetail(@PathVariable String id) {
-<<<<<<< HEAD
-        Account account = accountService.getAccountInfoById(id);
-=======
         Account account = accountService.getAccountInfo(id);
->>>>>>> origin/main
         return ResponseEntity.ok(account);
     }
 

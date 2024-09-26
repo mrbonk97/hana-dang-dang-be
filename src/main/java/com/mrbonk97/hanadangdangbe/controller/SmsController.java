@@ -1,5 +1,6 @@
 package com.mrbonk97.hanadangdangbe.controller;
 
+import com.mrbonk97.hanadangdangbe.controller.response.SmsRequest;
 import com.mrbonk97.hanadangdangbe.controller.response.SmsVerifyResponse;
 import com.mrbonk97.hanadangdangbe.service.SmsService;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,8 @@ public class SmsController {
     private final SmsService smsService;
 
     @PostMapping("/verify")
-    public ResponseEntity<SmsVerifyResponse> verify(@RequestBody String mobile_no) {
-        String code = smsService.send(mobile_no);
+    public ResponseEntity<SmsVerifyResponse> verify(@RequestBody SmsRequest smsRequest) {
+        String code = smsService.send(smsRequest.getMobile_no());
         SmsVerifyResponse smsVerifyResponse = new SmsVerifyResponse(code);
         return ResponseEntity.ok(smsVerifyResponse);
     }

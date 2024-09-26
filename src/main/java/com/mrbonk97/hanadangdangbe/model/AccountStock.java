@@ -23,7 +23,6 @@ public class AccountStock {
     private StockInfo stockInfo;
     private Long purchasePrice;
     private Long quantity;
-    private Long purchasePrice;
     private Long totalPrice;
 
 
