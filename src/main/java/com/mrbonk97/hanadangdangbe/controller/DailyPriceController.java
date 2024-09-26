@@ -20,12 +20,6 @@ import java.util.List;
 public class DailyPriceController {
     private final StockDailyPriceService stockDailyPriceService;
 
-    @GetMapping("/{code}")
-    public ResponseEntity<List<StockDailyPrice>> getStockInfoData(@PathVariable String code) {
-        log.info("일봉 조회 {}", code);
-        return ResponseEntity.ok(stockDailyPriceService.getStockDailyPriceByCode(code));
-    }
-
     @PostMapping
     public ResponseEntity<String> saveALl(@RequestBody StockDailyPriceCreateRequest stockDailyPriceCreateRequest) {
         stockDailyPriceService.save(stockDailyPriceCreateRequest.getCode(), stockDailyPriceCreateRequest.getStockDailyPrices());

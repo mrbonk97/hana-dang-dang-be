@@ -1,5 +1,6 @@
 package com.mrbonk97.hanadangdangbe.controller;
 
+import com.mrbonk97.hanadangdangbe.controller.request.DividendRegisterRequest;
 import com.mrbonk97.hanadangdangbe.controller.request.UserCreateRequest;
 import com.mrbonk97.hanadangdangbe.controller.request.UserSignInRequest;
 import com.mrbonk97.hanadangdangbe.controller.response.UserCreateResponse;
@@ -30,7 +31,7 @@ public class UserController {
         );
 
         Account account = accountService.createAccount(user);
-        log.info("사용자 계좌 생성 이름:{} 계좌번호:{}",user.getName(), account.getAccountNo());
+        log.info("사용자 계좌 생성 이름:{} 계좌번호:{}", user.getName(), account.getAccountNo());
 
         return ResponseEntity.ok(UserCreateResponse.from(user, account));
     }
@@ -47,6 +48,19 @@ public class UserController {
         log.info("유저 로그인 함 {}", user.getId());
 
         return ResponseEntity.ok(UserCreateResponse.from(user, account));
+
+    }
+
+    @PutMapping("/{id}/dividend-register")
+    public ResponseEntity<User> registerDividend(@RequestBody DividendRegisterRequest dividendRegisterRequest, @PathVariable Long id) {
+        log.info("유저 배당 연구소 등록 {}", id);
+        User user = userService.updateDividendInfo(id,
+                dividendRegisterRequest.getDividendGoal(),
+                dividendRegisterRequest.getDividendRiskType(),
+                dividendRegisterRequest.getDividendPreference(),
+                dividendRegisterRequest.getDividendArea());
+
+        return ResponseEntity.ok(user);
 
     }
 }

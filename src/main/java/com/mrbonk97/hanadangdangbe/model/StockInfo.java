@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Entity(name = "TB_STOCK_INFO")
 @Getter
 @Setter
@@ -70,4 +72,17 @@ public class StockInfo {
     private String idx_bztp_lcls_cd_name; // 지수업종중분류코드명
     private String idx_bztp_mcls_cd_name; // 지수업종중분류코드명
     private String idx_bztp_scls_cd_name; // 지수업종소분류코드명
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StockInfo stockInfo = (StockInfo) o;
+        return Objects.equals(code, stockInfo.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(code);
+    }
 }

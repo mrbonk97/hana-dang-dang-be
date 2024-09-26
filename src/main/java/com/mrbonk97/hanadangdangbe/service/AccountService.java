@@ -29,7 +29,7 @@ public class AccountService {
         Random random = new Random();
         StringBuilder sb = new StringBuilder();
 
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             sb.append(random.nextInt(9) + 1);
         }
 
@@ -42,15 +42,24 @@ public class AccountService {
         return accountRepository.findByUser(user).orElseThrow(() -> new RuntimeException("유저에게 할당된 계좌가 없습니다."));
     }
 
-    public Account getAccountInfo(User user) {
-        long stockBalance = 0;
-        Account account = getAccountByUser(user);
+    public Account getAccountInfoById(String accountId) {
+        Account account = findById(accountId);
+
+        long stockCurrentBalance = 0;
+        long stockInitBalance = 0;
         List<AccountStock> accountStockList = accountStockRepository.findAllByAccount(account);
 
-        for(var e: accountStockList) {
+        for (var e : accountStockList) {
             StockDailyPrice stockDailyPrice = stockDailyPriceRepository.findTopByCodeOrderByStckBsopDateDesc(e.getStockInfo().getCode()).orElseThrow(() -> new RuntimeException("종목을 찾을 수 없음"));
-            stockBalance += Long.parseLong(stockDailyPrice.getStck_clpr()) * e.getQuantity();
+            stockCurrentBalance += Long.parseLong(stockDailyPrice.getStck_clpr()) * e.getQuantity();
+            stockInitBalance += e.getPurchasePrice();
         }
+
+        account.setTotalBalance(account.getBalance() + stockCurrentBalance);
+        account.setStockInitBalance(stockInitBalance);
+        account.setStockCurrentBalance(stockCurrentBalance);
+        account.setStockProfit((stockCurrentBalance - stockInitBalance) / stockInitBalance * 100);
+        account.setWithDrawAmount(account.getBalance());
 
 
         return account;
@@ -65,4 +74,10 @@ public class AccountService {
         account.setBalance(account.getBalance() + amount);
         return accountRepository.save(account);
     }
+
+    public List<AccountStock> getAccountStockByAccountId(String id) {
+        Account account = findById(id);
+        return accountStockRepository.findAllByAccount(account);
+    }
+
 }

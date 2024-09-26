@@ -37,4 +37,14 @@ public class UserService {
         user.setPassword(password);
         return userRepository.save(user);
     }
+
+    public User updateDividendInfo(Long id, Long dividendGoal, String dividendRiskType, String dividendPreference, String dividendArea) {
+        User user = findUserById(id);
+        user.setIsDividendCreated(true);
+        user.setDividendGoal(dividendGoal);
+        user.setDividendRiskType(dividendRiskType);
+        user.setDividendPreference(dividendPreference);
+        user.setDividendArea(dividendArea);
+        return userRepository.save(user);
+    }
 }

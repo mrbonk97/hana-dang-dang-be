@@ -22,4 +22,12 @@ public class User {
     private String mobileNo;
     private String username;
     private String password;
+
+
+    // 배당 연구소 관련 데이터
+    private Boolean isDividendCreated = false;
+    private Long dividendGoal;
+    private String dividendRiskType;
+    private String dividendPreference;
+    private String dividendArea;
 }
