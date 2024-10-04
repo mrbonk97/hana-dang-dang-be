@@ -42,6 +42,8 @@ public class StockService {
         stockTransaction.setPrice(price);
         stockTransaction.setQuantity(quantity);
         stockTransaction.setStockInfo(stockInfo);
+        stockTransaction.setTransactionType("증권매수");
+        stockTransaction.setAmount(price * quantity);
         stockTransactionRepository.save(stockTransaction);
 
         if (accountStock.isPresent()) {

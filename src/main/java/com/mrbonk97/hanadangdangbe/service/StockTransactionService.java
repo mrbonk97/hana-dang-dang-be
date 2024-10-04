@@ -16,4 +16,8 @@ public class StockTransactionService {
     public List<StockTransaction> findRecentActivity(Account account) {
         return stockTransactionRepository.findTop10ByAccountOrderByCreatedAtDesc(account);
     }
+
+    public List<StockTransaction> findAllAccountDividendHistory(String id) {
+        return stockTransactionRepository.findAllByAccount_AccountNoAndTransactionTypeOrderByCreatedAtDesc(id, "배당금입금");
+    }
 }

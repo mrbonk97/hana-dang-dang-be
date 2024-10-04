@@ -19,4 +19,109 @@
                                   where rownum = 1)
         order by TO_NUMBER(ACML_VOL) desc
     </select>
+
+    <select id="selectAccountStockList" resultType="com.mrbonk97.hanadangdangbe.dto.AccountStockDto">
+        select B.CODE                                                     as code,
+               C.PRDT_ABRV_NAME                                           as title,
+               A.QUANTITY                                                 as quantity,
+               A.PURCHASE_PRICE                                           as price,
+               A.TOTAL_PRICE                                              as purchase_total_price,
+               B.STCK_CLPR                                                as current_price,
+               B.STCK_CLPR * A.QUANTITY                                   as current_total_price,
+               B.STCK_CLPR * A.QUANTITY - A.TOTAL_PRICE                   as profit,
+               (B.STCK_CLPR * A.QUANTITY - A.TOTAL_PRICE) / A.TOTAL_PRICE as profit_percentage
+        from TB_ACCOUNT_STOCK A
+                 inner join (select *
+                             from TB_STOCK_PRICE_DAILY
+                             where STCK_BSOP_DATE = (select MAX(STCK_BSOP_DATE) FROM TB_STOCK_PRICE_DAILY)) B
+                            on SUBSTR(A.STOCK_INFO_PDNO, 7) = B.CODE
+                 inner join TB_STOCK_INFO C
+                            on A.STOCK_INFO_PDNO = C.PDNO
+
+        where A.ACCOUNT_ACCOUNT_NO = #{accountNo}
+        order by current_total_price desc
+    </select>
+
+
+    <select id="selectAccountProfitEstimate" resultType="com.mrbonk97.hanadangdangbe.dto.AccountProfitEstimateDto">
+        SELECT A.id,
+               B.CODE,
+               B.TITLE,
+               A.QUANTITY,
+               A.PURCHASE_PRICE,
+               A.TOTAL_PRICE,
+               NVL(A.QUANTITY * B.AMOUNT, 0) AS ESTIMATE_PROFIT,
+               NVL(B.AMOUNT, 0)              as amount,
+               NVL(B.PERCENTAGE, 0)          as percentage
+        FROM TB_ACCOUNT_STOCK A
+                 LEFT OUTER JOIN (SELECT CODE,
+                                         TITLE,
+                                         SUM(AMOUNT)     AS AMOUNT,
+                                         AVG(PERCENTAGE) AS PERCENTAGE
+                                  FROM (SELECT *
+                                        FROM TB_DIVIDEND_HISTORY
+                                        WHERE DECLARE_DATE >= TO_DATE('2023-01-01', 'YYYY-MM-DD')
+                                          AND
+                                            DECLARE_DATE &lt;= TO_DATE('2023-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS'))
+                                  GROUP BY CODE, TITLE) B ON SUBSTR(A.STOCK_INFO_PDNO, 7) = B.CODE
+        WHERE A.ACCOUNT_ACCOUNT_NO = #{accountNo}
+        ORDER BY AMOUNT DESC
+    </select>
+
+    <select id="selectAccountMonthlyProfitEstimate"
+            resultType="com.mrbonk97.hanadangdangbe.dto.AccountMonthlyProfitEstimateDto">
+        SELECT A.id,
+               B.CODE,
+               B.TITLE,
+               A.QUANTITY,
+               A.PURCHASE_PRICE,
+               A.TOTAL_PRICE,
+               NVL(A.QUANTITY * B.AMOUNT, 0) AS ESTIMATE_PROFIT,
+               NVL(B.AMOUNT, 0)              as amount,
+               NVL(B.PERCENTAGE, 0)          as percentage,
+               B.DECLARE_DATE
+        FROM TB_ACCOUNT_STOCK A
+                 LEFT OUTER JOIN (SELECT CODE,
+                                         TITLE,
+                                         AMOUNT,
+                                         PERCENTAGE,
+                                         DECLARE_DATE
+                                  FROM (SELECT *
+                                        FROM TB_DIVIDEND_HISTORY
+                                        WHERE DECLARE_DATE >= TO_DATE('2023-01-01', 'YYYY-MM-DD')
+                                          AND DECLARE_DATE &lt;=
+                                              TO_DATE('2023-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS'))) B
+                                 ON SUBSTR(A.STOCK_INFO_PDNO, 7) = B.CODE
+        WHERE A.ACCOUNT_ACCOUNT_NO = #{accountNo}
+          AND CODE IS NOT NULL
+        ORDER BY DECLARE_DATE DESC
+    </select>
+
+    <select id="selectDividendRecommendList"
+            resultType="com.mrbonk97.hanadangdangbe.dto.DividendRecommendDto">
+        SELECT A.ID,
+               A.TITLE,
+               A.CODE,
+               TO_NUMBER(TO_CHAR(A.DECLARE_DATE, 'MM')) AS MONTH,
+               A.DIVIDEND_TYPE,
+               A.AMOUNT,
+               A.PAY_DATE,
+               A.PERCENTAGE,
+               B.SUM_AMOUNT,
+               B.SUM_PERCENTAGE
+        FROM TB_DIVIDEND_HISTORY A
+                 LEFT OUTER JOIN (SELECT CODE,
+                                         SUM(AMOUNT)     AS SUM_AMOUNT,
+                                         SUM(PERCENTAGE) AS SUM_PERCENTAGE
+                                  FROM TB_DIVIDEND_HISTORY
+                                  WHERE DECLARE_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
+                                    AND DECLARE_DATE &lt;= TO_DATE('2023-12-31', 'YYYY-MM-DD')
+                                  GROUP BY CODE) B
+                                 ON A.CODE = B.CODE
+        WHERE SUM_AMOUNT IS NOT NULL
+          AND A.AMOUNT IS NOT NULL
+          AND A.AMOUNT > 0
+          AND SUM_AMOUNT > 0
+        ORDER BY SUM_PERCENTAGE DESC, MONTH
+    </select>
 </mapper>

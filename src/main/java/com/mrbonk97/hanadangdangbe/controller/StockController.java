@@ -6,6 +6,7 @@ import com.mrbonk97.hanadangdangbe.dto.*;
 import com.mrbonk97.hanadangdangbe.model.StockDailyPrice;
 import com.mrbonk97.hanadangdangbe.model.StockInfo;
 import com.mrbonk97.hanadangdangbe.model.StockTransaction;
+import com.mrbonk97.hanadangdangbe.repository.mybatis.StockMapper;
 import com.mrbonk97.hanadangdangbe.service.HanTuService;
 import com.mrbonk97.hanadangdangbe.service.StockDailyPriceService;
 import com.mrbonk97.hanadangdangbe.service.StockInfoService;
@@ -27,6 +28,7 @@ public class StockController {
     private final HanTuService hanTuService;
     private final StockService stockService;
     private final StockDailyPriceService stockDailyPriceService;
+    private final StockMapper stockMapper;
 
     @GetMapping("/rank")
     public ResponseEntity<Mono<StockListRankDto>> getStockListRank() {
@@ -94,5 +96,12 @@ public class StockController {
         log.info("주식 일자별 가격 {}", code);
         return ResponseEntity.ok(DailyStockPriceResponse.from(stockDailyPriceService.getStockDailyPriceByCode(code)));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<SearchStockDto>> searchStock(@RequestParam String keyword) {
+        log.info("주식 검색 {}", keyword);
+        return ResponseEntity.ok(stockMapper.selectSearchStockList(keyword));
+    }
+
 
 }

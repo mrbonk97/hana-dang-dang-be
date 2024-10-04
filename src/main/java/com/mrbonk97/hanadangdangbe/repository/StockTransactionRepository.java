@@ -11,5 +11,8 @@ import java.util.List;
 @Repository
 public interface StockTransactionRepository extends JpaRepository<StockTransaction, Long> {
     List<StockTransaction> findAllByAccountOrderByCreatedAtDesc(Account account);
+
     List<StockTransaction> findTop10ByAccountOrderByCreatedAtDesc(Account account);
+
+    List<StockTransaction> findAllByAccount_AccountNoAndTransactionTypeOrderByCreatedAtDesc(String account, String transactionType);
 }

@@ -15,6 +15,9 @@ public class StockTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String transactionType;
+    private String dividendType;
+    private Long amount;
     private Long quantity;
     private Long price;
     private Date createdAt;

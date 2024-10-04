@@ -97,7 +97,7 @@ public class HanTuService {
 
         // WebClient는 Builder 패턴 처럼 사용
         WebClient webClient = WebClient.builder().build();
-        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice?FID_COND_MRKT_DIV_CODE=U&FID_INPUT_DATE_1="+ _weekAgo + "&FID_INPUT_DATE_2=" + _today + "&FID_PERIOD_DIV_CODE=D&FID_INPUT_ISCD=" + code;
+        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice?FID_COND_MRKT_DIV_CODE=U&FID_INPUT_DATE_1=" + _weekAgo + "&FID_INPUT_DATE_2=" + _today + "&FID_PERIOD_DIV_CODE=D&FID_INPUT_ISCD=" + code;
         // 어떤 HTTP 메소드로 요청 보낼지를 get(), post() 메소드 등으로 결정
         // 만일 다른 메소드를 쓰고 싶다면, method()
 
@@ -149,7 +149,7 @@ public class HanTuService {
 
         // WebClient는 Builder 패턴 처럼 사용
         WebClient webClient = WebClient.builder().build();
-        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice?FID_COND_MRKT_DIV_CODE=U&FID_INPUT_DATE_1="+ _weekAgo + "&FID_INPUT_DATE_2=" + _today + "&FID_PERIOD_DIV_CODE=D&FID_INPUT_ISCD=" + code;
+        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice?FID_COND_MRKT_DIV_CODE=U&FID_INPUT_DATE_1=" + _weekAgo + "&FID_INPUT_DATE_2=" + _today + "&FID_PERIOD_DIV_CODE=D&FID_INPUT_ISCD=" + code;
         // 어떤 HTTP 메소드로 요청 보낼지를 get(), post() 메소드 등으로 결정
         // 만일 다른 메소드를 쓰고 싶다면, method()
 
@@ -243,4 +243,44 @@ public class HanTuService {
                 .retrieve()
                 .bodyToMono(StockMinuteDto.class);
     }
+
+    //예탁원정보(배당일정)[국내주식-145]
+    public Mono<DividendCalendarDto> getDividendCalendar(String code, String sTime, String eTime) {
+        if (code == null) code = "";
+        if (sTime == null) sTime = "";
+        if (eTime == null) eTime = "";
+
+        WebClient webClient = WebClient.builder().build();
+        String url = String.format("https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/ksdinfo/dividend?CTS&GB1=0&F_DT=%s&T_DT=%s&SHT_CD=%s&HIGH_GB=", sTime, eTime, code);
+
+        return webClient.get()
+                .uri(url)
+                .header("Authorization", "Bearer " + ACCESS_TOKEN)
+                .header("content-type", "application/json; charset=utf-8")
+                .header("appkey", APP_KEY)
+                .header("appsecret", APP_SECRET)
+                .header("tr_id", "HHKDB669102C0")
+                .header("custtype", "P")
+                .retrieve()
+                .bodyToMono(DividendCalendarDto.class);
+    }
+
+    //예탁원정보(주주총회일정) [국내주식-154]
+    public Mono<BoardMeetingDto> getBoardMeeting(String code) {
+        if (code == null) code = "";
+        WebClient webClient = WebClient.builder().build();
+        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/ksdinfo/sharehld-meet?CTS&F_DT=20200101&T_DT=20241231&SHT_CD=" + code;
+
+        return webClient.get()
+                .uri(url)
+                .header("Authorization", "Bearer " + ACCESS_TOKEN)
+                .header("content-type", "application/json; charset=utf-8")
+                .header("appkey", APP_KEY)
+                .header("appsecret", APP_SECRET)
+                .header("tr_id", "HHKDB669111C0")
+                .header("custtype", "P")
+                .retrieve()
+                .bodyToMono(BoardMeetingDto.class);
+    }
+
 }

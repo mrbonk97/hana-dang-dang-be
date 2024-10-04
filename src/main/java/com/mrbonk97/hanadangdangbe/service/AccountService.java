@@ -1,12 +1,10 @@
 package com.mrbonk97.hanadangdangbe.service;
 
-import com.mrbonk97.hanadangdangbe.model.Account;
-import com.mrbonk97.hanadangdangbe.model.AccountStock;
-import com.mrbonk97.hanadangdangbe.model.StockDailyPrice;
-import com.mrbonk97.hanadangdangbe.model.User;
+import com.mrbonk97.hanadangdangbe.model.*;
 import com.mrbonk97.hanadangdangbe.repository.AccountRepository;
 import com.mrbonk97.hanadangdangbe.repository.AccountStockRepository;
 import com.mrbonk97.hanadangdangbe.repository.StockDailyPriceRepository;
+import com.mrbonk97.hanadangdangbe.repository.StockTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +18,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final AccountStockRepository accountStockRepository;
     private final StockDailyPriceRepository stockDailyPriceRepository;
+    private final StockTransactionRepository stockTransactionRepository;
 
     public Account createAccount(User user) {
         Account account = new Account();
@@ -83,9 +82,15 @@ public class AccountService {
 
 
     public Account addToBalance(String  id, Long amount) {
-        System.out.println(amount+" 히히히");
         Account account = findById(id);
         account.setBalance(account.getBalance() + amount);
+        StockTransaction stockTransaction = new StockTransaction();
+        stockTransaction.setAccount(account);
+        stockTransaction.setTransactionType("이체입금");
+        stockTransaction.setAmount(amount);
+        stockTransaction.setPrice(amount);
+
+        stockTransactionRepository.save(stockTransaction);
         return accountRepository.save(account);
     }
 
