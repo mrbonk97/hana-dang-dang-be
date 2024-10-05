@@ -13,5 +13,6 @@ public interface StockMapper {
     List<AccountProfitEstimateDto> selectAccountProfitEstimate(@Param("accountNo") String accountNo);
     List<AccountMonthlyProfitEstimateDto> selectAccountMonthlyProfitEstimate(@Param("accountNo") String accountNo);
     List<DividendRecommendDto> selectDividendRecommendList();
-    List<SearchStockDto> selectSearchStockList(@Param("keyword") String keyword);
+    List<SearchStockDto> selectfindStockByName(@Param("keyword") String keyword);
+    List<StockListDto> selectfindStockListPage(@Param("page") int page);
 }

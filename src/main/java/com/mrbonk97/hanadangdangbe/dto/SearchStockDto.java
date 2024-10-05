@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SearchStockDto {
     String code;
-    String title;
-    Long price;
-    Double prevPercentage;
+    String prdtAbrvName;
+    Long stckClpr;
+    Double prdyVrss;
 }

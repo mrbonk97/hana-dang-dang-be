@@ -124,4 +124,48 @@
           AND SUM_AMOUNT > 0
         ORDER BY SUM_PERCENTAGE DESC, MONTH
     </select>
+
+    <select id="selectfindStockByName" resultType="com.mrbonk97.hanadangdangbe.dto.SearchStockDto">
+        select A.PRDT_ABRV_NAME, A.CODE, D.STCK_CLPR, D.PRDY_VRSS
+        from TB_STOCK_INFO A
+                 INNER JOIN(select B.*
+                            FROM TB_STOCK_PRICE_DAILY B
+                                     INNER JOIN(select code, MAX(STCK_BSOP_DATE) AS RECENT_DATE
+                                                from TB_STOCK_PRICE_DAILY
+                                                GROUP BY CODE) C
+                                               ON B.CODE = C.CODE AND B.STCK_BSOP_DATE = C.RECENT_DATE) D
+                           ON A.CODE = D.CODE
+        WHERE A.PRDT_NAME LIKE '%' || #{keyword} || '%'
+    </select>
+
+    <select id="selectfindStockListPage" resultType="com.mrbonk97.hanadangdangbe.dto.StockListDto">
+        select *
+        FROM (select ROWNUM as RN,
+                     PRDT_ABRV_NAME,
+                     code,
+                     std_idst_clsf_cd_name,
+                     stck_clpr,
+                     acml_vol,
+                     ACML_TR_PBMN,
+                     prdy_vrss
+              FROM (select A.PRDT_ABRV_NAME,
+                           A.code,
+                           A.std_idst_clsf_cd_name,
+                           D.stck_clpr,
+                           D.acml_vol,
+                           D.ACML_TR_PBMN,
+                           D.prdy_vrss
+                    from TB_STOCK_INFO A
+                             INNER JOIN (select B.*
+                                         FROM TB_STOCK_PRICE_DAILY B
+                                                  INNER JOIN (select code, MAX(STCK_BSOP_DATE) AS RECENT_DATE
+                                                              from TB_STOCK_PRICE_DAILY
+                                                              GROUP BY CODE) C
+                                                             ON B.CODE = C.CODE AND B.STCK_BSOP_DATE = C.RECENT_DATE) D
+                                        ON A.CODE = D.CODE
+                    ORDER BY TO_NUMBER(D.ACML_TR_PBMN) DESC))
+        WHERE RN &gt; #{page} * 50
+          AND RN &lt;= (#{page} + 1) * 50
+
+    </select>
 </mapper>

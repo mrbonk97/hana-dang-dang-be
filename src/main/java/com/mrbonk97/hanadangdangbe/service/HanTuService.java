@@ -21,14 +21,10 @@ public class HanTuService {
     private String ACCESS_TOKEN;
 
 
-    public Mono<StockListRankDto> getStockListRank() {
-
-        // WebClient는 Builder 패턴 처럼 사용
+    // 거래량 순위
+    public Mono<StockListRankDto> getStockListRankVol() {
         WebClient webClient = WebClient.builder().build();
-//        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/volume-rank?FID_COND_MRKT_DIV_CODE=J&FID_COND_SCR_DIV_CODE=20171&FID_INPUT_ISCD=0000&FID_DIV_CLS_CODE=0&FID_BLNG_CLS_CODE=0&FID_TRGT_CLS_CODE=111111111&FID_TRGT_EXLS_CLS_CODE=0000000000&FID_INPUT_PRICE_1=&FID_INPUT_PRICE_2&FID_VOL_CNT&FID_INPUT_DATE_1";
         String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/volume-rank?FID_COND_MRKT_DIV_CODE=J&FID_COND_SCR_DIV_CODE=20171&FID_INPUT_ISCD=0001&FID_DIV_CLS_CODE=0&FID_BLNG_CLS_CODE=0&FID_TRGT_CLS_CODE=111111111&FID_TRGT_EXLS_CLS_CODE=0000000000&FID_INPUT_PRICE_1=&FID_INPUT_PRICE_2&FID_VOL_CNT&FID_INPUT_DATE_1";
-        // 어떤 HTTP 메소드로 요청 보낼지를 get(), post() 메소드 등으로 결정
-        // 만일 다른 메소드를 쓰고 싶다면, method()
 
         return webClient.get()
                 .uri(url)
@@ -37,6 +33,57 @@ public class HanTuService {
                 .header("appkey", APP_KEY)
                 .header("appsecret", APP_SECRET)
                 .header("tr_id", "FHPST01710000")
+                .header("custtype", "P")
+                .retrieve()
+                .bodyToMono(StockListRankDto.class);
+    }
+
+    // 등락률 순위
+    public Mono<StockListRankDto> getStockListRankRsfl() {
+        WebClient webClient = WebClient.builder().build();
+        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/ranking/fluctuation?fid_rsfl_rate2&fid_cond_mrkt_div_code=J&fid_cond_scr_div_code=20170&fid_input_iscd=0001&fid_rank_sort_cls_code=0&fid_input_cnt_1=0&fid_prc_cls_code=0&fid_input_price_1&fid_input_price_2&fid_vol_cnt&fid_trgt_cls_code=0&fid_trgt_exls_cls_code=0&fid_div_cls_code=0&fid_rsfl_rate1";
+
+        return webClient.get()
+                .uri(url)
+                .header("Authorization", "Bearer " + ACCESS_TOKEN)
+                .header("content-type", "application/json; charset=utf-8")
+                .header("appkey", APP_KEY)
+                .header("appsecret", APP_SECRET)
+                .header("tr_id", "FHPST01700000")
+                .header("custtype", "P")
+                .retrieve()
+                .bodyToMono(StockListRankDto.class);
+    }
+
+    // 체결강도 순위
+    public Mono<StockListRankDto> getStockListRankPower() {
+        WebClient webClient = WebClient.builder().build();
+        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/ranking/volume-power?fid_trgt_exls_cls_code=0&fid_cond_mrkt_div_code=J&fid_cond_scr_div_code=20168&fid_input_iscd=0001&fid_div_cls_code=0&fid_input_price_1&fid_input_price_2&fid_vol_cnt&fid_trgt_cls_code";
+
+        return webClient.get()
+                .uri(url)
+                .header("Authorization", "Bearer " + ACCESS_TOKEN)
+                .header("content-type", "application/json; charset=utf-8")
+                .header("appkey", APP_KEY)
+                .header("appsecret", APP_SECRET)
+                .header("tr_id", "FHPST01680000")
+                .header("custtype", "P")
+                .retrieve()
+                .bodyToMono(StockListRankDto.class);
+    }
+
+    // 국내주식 공매도 상위종목[국내주식-133]
+    public Mono<StockListRankDto> getStockListRankShort() {
+        WebClient webClient = WebClient.builder().build();
+        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/ranking/short-sale?FID_APLY_RANG_VOL&FID_COND_MRKT_DIV_CODE=J&FID_COND_SCR_DIV_CODE=20482&FID_INPUT_ISCD=0001&FID_PERIOD_DIV_CODE=D&FID_INPUT_CNT_1=0&FID_TRGT_EXLS_CLS_CODE&FID_TRGT_CLS_CODE&FID_APLY_RANG_PRC_1&FID_APLY_RANG_PRC_2";
+
+        return webClient.get()
+                .uri(url)
+                .header("Authorization", "Bearer " + ACCESS_TOKEN)
+                .header("content-type", "application/json; charset=utf-8")
+                .header("appkey", APP_KEY)
+                .header("appsecret", APP_SECRET)
+                .header("tr_id", "FHPST04820000")
                 .header("custtype", "P")
                 .retrieve()
                 .bodyToMono(StockListRankDto.class);

@@ -30,17 +30,31 @@ public class StockController {
     private final StockDailyPriceService stockDailyPriceService;
     private final StockMapper stockMapper;
 
-    @GetMapping("/rank")
-    public ResponseEntity<Mono<StockListRankDto>> getStockListRank() {
-        log.info("거래량 순위 조회");
-        return ResponseEntity.ok(hanTuService.getStockListRank());
+    // 코스피 리스트 전체 조회
+    @GetMapping
+    public ResponseEntity<List<StockListDto>> getAllStockWithPrice(@RequestParam int page) {
+        log.info("종목 목록 조회 페이지 {}", page);
+        return ResponseEntity.ok(stockMapper.selectfindStockListPage(page));
     }
 
+    // 상위 30개 순위
+    @GetMapping("/rank")
+    public ResponseEntity<Mono<StockListRankDto>> getStockListRank(@RequestParam String type) {
+        log.info("거래량 순위 조회 {}", type);
+        if(type.equals("vol")) return ResponseEntity.ok(hanTuService.getStockListRankVol());
+        if(type.equals("rsfl")) return ResponseEntity.ok(hanTuService.getStockListRankRsfl());
+        if(type.equals("power")) return ResponseEntity.ok(hanTuService.getStockListRankPower());
+        if(type.equals("short")) return ResponseEntity.ok(hanTuService.getStockListRankShort());
+        throw new RuntimeException("잘못된 타입");
+    }
+
+    // 매일 밤 DB에 자동으로 저장하는 코드
     @PostMapping
     public ResponseEntity<StockInfo> saveStockInfoData(@RequestBody StockInfo stockInfo) {
         return ResponseEntity.ok(stockInfoService.save(stockInfo));
     }
 
+    // 주식 분봉 조회
     @GetMapping("/{code}/minute")
     public ResponseEntity<Mono<StockMinuteDto>> getStockMinuteData(@PathVariable String code, @RequestParam String time) {
         log.info("주식 분봉 조회 {}", code);
@@ -67,11 +81,7 @@ public class StockController {
         return ResponseEntity.ok(stockTransaction);
     }
 
-    @GetMapping
-    public ResponseEntity<List<StockPriceDto>> getAllStockWithPrice() {
-        log.info("종목 목록 조회");
-        return ResponseEntity.ok(stockService.getStockPriceList());
-    }
+
 
     @GetMapping("/{code}/opinion")
     public ResponseEntity<Mono<StockOpinionDto>> getStockOpinionByCode(@PathVariable String code) {
@@ -100,7 +110,7 @@ public class StockController {
     @GetMapping("/search")
     public ResponseEntity<List<SearchStockDto>> searchStock(@RequestParam String keyword) {
         log.info("주식 검색 {}", keyword);
-        return ResponseEntity.ok(stockMapper.selectSearchStockList(keyword));
+        return ResponseEntity.ok(stockMapper.selectfindStockByName(keyword));
     }
 
 
