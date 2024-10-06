@@ -24,7 +24,7 @@ public class UserService {
 
     public User signInUser(String username, String password) {
         User user = findUserByUsername(username);
-        if(!user.getPassword().equals(password)) throw new RuntimeException("패스워드가 일치하지 않습니다.");
+        if (!user.getPassword().equals(password)) throw new RuntimeException("패스워드가 일치하지 않습니다.");
         return user;
     }
 
@@ -38,13 +38,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateDividendInfo(Long id, Long dividendGoal, String dividendRiskType, String dividendPreference, String dividendArea) {
+    public User updateDividendInfo(Long id, Long dividendGoal) {
         User user = findUserById(id);
         user.setIsDividendCreated(true);
         user.setDividendGoal(dividendGoal);
-        user.setDividendRiskType(dividendRiskType);
-        user.setDividendPreference(dividendPreference);
-        user.setDividendArea(dividendArea);
         return userRepository.save(user);
     }
 }

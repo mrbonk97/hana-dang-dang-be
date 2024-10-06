@@ -10,8 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DividendRegisterRequest {
-    private Long dividendGoal;
-    private String dividendRiskType;
-    private String dividendPreference;
-    private String dividendArea;
+    private Long goal;
 }

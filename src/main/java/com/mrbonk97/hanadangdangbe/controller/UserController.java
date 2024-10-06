@@ -51,16 +51,12 @@ public class UserController {
 
     }
 
-    @PutMapping("/{id}/dividend-register")
+    @PutMapping("/{id}/set-goal")
     public ResponseEntity<User> registerDividend(@RequestBody DividendRegisterRequest dividendRegisterRequest, @PathVariable Long id) {
         log.info("유저 배당 연구소 등록 {}", id);
-        User user = userService.updateDividendInfo(id,
-                dividendRegisterRequest.getDividendGoal(),
-                dividendRegisterRequest.getDividendRiskType(),
-                dividendRegisterRequest.getDividendPreference(),
-                dividendRegisterRequest.getDividendArea());
-
+        User user = userService.updateDividendInfo(id, dividendRegisterRequest.getGoal());
         return ResponseEntity.ok(user);
-
     }
+
+
 }

@@ -20,16 +20,12 @@ public class DividendHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String recordDate;
-    private String code;
     private String title;
-    private String dividendKind;
-    private String faceValue;
-    private String perStockDividendAmount;
-    private String dividendRate;
-    private String stockDividendPayRate;
-    private String dividendPayDate;
-    private String oddPayDate;
-    private String stockKind;
-    private String highDividendGb;
+    private String code;
+    private LocalDate lockDate;
+    private LocalDate payDate;
+    private String dividendType;
+    private Long amount;
+    private Double yieldPercentage;
+    private Double dividendPercentage;
 }
