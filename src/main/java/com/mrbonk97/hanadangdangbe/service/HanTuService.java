@@ -330,4 +330,21 @@ public class HanTuService {
                 .bodyToMono(BoardMeetingDto.class);
     }
 
+    //예탁원정보(주주총회일정) [국내주식-154]
+    public Mono<StockStabilityInfoDto> getStabilityInfo(String code) {
+        WebClient webClient = WebClient.builder().build();
+        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/finance/stability-ratio?fid_div_cls_code=0&fid_cond_mrkt_div_code=J&fid_input_iscd=" + code;
+
+        return webClient.get()
+                .uri(url)
+                .header("Authorization", "Bearer " + ACCESS_TOKEN)
+                .header("content-type", "application/json; charset=utf-8")
+                .header("appkey", APP_KEY)
+                .header("appsecret", APP_SECRET)
+                .header("tr_id", "FHKST66430600")
+                .header("custtype", "P")
+                .retrieve()
+                .bodyToMono(StockStabilityInfoDto.class);
+    }
+
 }

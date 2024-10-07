@@ -45,8 +45,8 @@
 
     <select id="selectAccountProfitEstimate" resultType="com.mrbonk97.hanadangdangbe.dto.AccountProfitEstimateDto">
         SELECT A.id,
-               B.CODE,
-               B.TITLE,
+               C.CODE,
+               C.PRDT_ABRV_NAME              as title,
                A.QUANTITY,
                A.PURCHASE_PRICE,
                A.TOTAL_PRICE,
@@ -54,15 +54,16 @@
                NVL(B.AMOUNT, 0)              as amount,
                NVL(B.PERCENTAGE, 0)          as percentage
         FROM TB_ACCOUNT_STOCK A
+                 INNER JOIN TB_STOCK_INFO C
+                            ON A.STOCK_INFO_PDNO = C.PDNO
                  LEFT OUTER JOIN (SELECT CODE,
                                          TITLE,
-                                         SUM(AMOUNT)     AS AMOUNT,
-                                         AVG(PERCENTAGE) AS PERCENTAGE
+                                         SUM(AMOUNT)           AS AMOUNT,
+                                         AVG(YIELD_PERCENTAGE) AS PERCENTAGE
                                   FROM (SELECT *
                                         FROM TB_DIVIDEND_HISTORY
-                                        WHERE DECLARE_DATE >= TO_DATE('2023-01-01', 'YYYY-MM-DD')
-                                          AND
-                                            DECLARE_DATE &lt;= TO_DATE('2023-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS'))
+                                        WHERE LOCK_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
+                                          AND LOCK_DATE &lt;= TO_DATE('2023-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS'))
                                   GROUP BY CODE, TITLE) B ON SUBSTR(A.STOCK_INFO_PDNO, 7) = B.CODE
         WHERE A.ACCOUNT_ACCOUNT_NO = #{accountNo}
         ORDER BY AMOUNT DESC
@@ -78,23 +79,23 @@
                A.TOTAL_PRICE,
                NVL(A.QUANTITY * B.AMOUNT, 0) AS ESTIMATE_PROFIT,
                NVL(B.AMOUNT, 0)              as amount,
-               NVL(B.PERCENTAGE, 0)          as percentage,
-               B.DECLARE_DATE
+               NVL(B.YIELD_PERCENTAGE, 0)    as percentage,
+               B.LOCK_DATE
         FROM TB_ACCOUNT_STOCK A
                  LEFT OUTER JOIN (SELECT CODE,
                                          TITLE,
                                          AMOUNT,
-                                         PERCENTAGE,
-                                         DECLARE_DATE
+                                         YIELD_PERCENTAGE,
+                                         LOCK_DATE
                                   FROM (SELECT *
                                         FROM TB_DIVIDEND_HISTORY
-                                        WHERE DECLARE_DATE >= TO_DATE('2023-01-01', 'YYYY-MM-DD')
-                                          AND DECLARE_DATE &lt;=
+                                        WHERE LOCK_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
+                                          AND LOCK_DATE &lt;=
                                               TO_DATE('2023-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS'))) B
                                  ON SUBSTR(A.STOCK_INFO_PDNO, 7) = B.CODE
         WHERE A.ACCOUNT_ACCOUNT_NO = #{accountNo}
           AND CODE IS NOT NULL
-        ORDER BY DECLARE_DATE DESC
+        ORDER BY LOCK_DATE DESC
     </select>
 
     <select id="selectDividendRecommendList"
@@ -102,20 +103,20 @@
         SELECT A.ID,
                A.TITLE,
                A.CODE,
-               TO_NUMBER(TO_CHAR(A.DECLARE_DATE, 'MM')) AS MONTH,
+               TO_NUMBER(TO_CHAR(A.LOCK_DATE, 'MM')) AS MONTH,
                A.DIVIDEND_TYPE,
                A.AMOUNT,
                A.PAY_DATE,
-               A.PERCENTAGE,
+               A.YIELD_PERCENTAGE,
                B.SUM_AMOUNT,
                B.SUM_PERCENTAGE
         FROM TB_DIVIDEND_HISTORY A
                  LEFT OUTER JOIN (SELECT CODE,
-                                         SUM(AMOUNT)     AS SUM_AMOUNT,
-                                         SUM(PERCENTAGE) AS SUM_PERCENTAGE
+                                         SUM(AMOUNT)           AS SUM_AMOUNT,
+                                         SUM(YIELD_PERCENTAGE) AS SUM_PERCENTAGE
                                   FROM TB_DIVIDEND_HISTORY
-                                  WHERE DECLARE_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
-                                    AND DECLARE_DATE &lt;= TO_DATE('2023-12-31', 'YYYY-MM-DD')
+                                  WHERE LOCK_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
+                                    AND LOCK_DATE &lt;= TO_DATE('2023-12-31', 'YYYY-MM-DD')
                                   GROUP BY CODE) B
                                  ON A.CODE = B.CODE
         WHERE SUM_AMOUNT IS NOT NULL

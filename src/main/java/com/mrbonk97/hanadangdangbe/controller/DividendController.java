@@ -1,7 +1,9 @@
 package com.mrbonk97.hanadangdangbe.controller;
 
+import com.mrbonk97.hanadangdangbe.controller.request.DividendRecommendRequest;
 import com.mrbonk97.hanadangdangbe.dto.BoardMeetingDto;
 import com.mrbonk97.hanadangdangbe.dto.DividendCalendarDto;
+import com.mrbonk97.hanadangdangbe.dto.DividendRecommendResponseDto;
 import com.mrbonk97.hanadangdangbe.model.DividendHistory;
 import com.mrbonk97.hanadangdangbe.model.DividendRank;
 import com.mrbonk97.hanadangdangbe.repository.DividendHistoryRepository;
@@ -49,27 +51,27 @@ public class DividendController {
         log.info("주주총회 일정 조회 {}", code);
         return ResponseEntity.ok(hanTuService.getBoardMeeting(code));
     }
-//
-//    @PostMapping("/recommend")
-//    public ResponseEntity<List<DividendRecommendResponseDto>> getRecommendStock(@RequestBody DividendRecommendRequest dividendRecommendRequest) {
-//        log.info("배당주 추천해줌");
-//        List<DividendRecommendResponseDto> response = dividendHistoryService.getRecommendStock(
-//                dividendRecommendRequest.getM1(),
-//                dividendRecommendRequest.getM2(),
-//                dividendRecommendRequest.getM3(),
-//                dividendRecommendRequest.getM4(),
-//                dividendRecommendRequest.getM5(),
-//                dividendRecommendRequest.getM6(),
-//                dividendRecommendRequest.getM7(),
-//                dividendRecommendRequest.getM8(),
-//                dividendRecommendRequest.getM9(),
-//                dividendRecommendRequest.getM10(),
-//                dividendRecommendRequest.getM11(),
-//                dividendRecommendRequest.getM12()
-//        );
-//
-//        return ResponseEntity.ok(response);
-//    }
+
+    @PostMapping("/recommend")
+    public ResponseEntity<List<DividendRecommendResponseDto>> getRecommendStock(@RequestBody DividendRecommendRequest dividendRecommendRequest) {
+        log.info("배당주 추천해줌");
+        List<DividendRecommendResponseDto> response = dividendHistoryService.getRecommendStock(
+                dividendRecommendRequest.getM1(),
+                dividendRecommendRequest.getM2(),
+                dividendRecommendRequest.getM3(),
+                dividendRecommendRequest.getM4(),
+                dividendRecommendRequest.getM5(),
+                dividendRecommendRequest.getM6(),
+                dividendRecommendRequest.getM7(),
+                dividendRecommendRequest.getM8(),
+                dividendRecommendRequest.getM9(),
+                dividendRecommendRequest.getM10(),
+                dividendRecommendRequest.getM11(),
+                dividendRecommendRequest.getM12()
+        );
+
+        return ResponseEntity.ok(response);
+    }
 
 
 }

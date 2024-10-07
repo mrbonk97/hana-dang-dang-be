@@ -41,10 +41,10 @@ public class StockController {
     @GetMapping("/rank")
     public ResponseEntity<Mono<StockListRankDto>> getStockListRank(@RequestParam String type) {
         log.info("거래량 순위 조회 {}", type);
-        if(type.equals("vol")) return ResponseEntity.ok(hanTuService.getStockListRankVol());
-        if(type.equals("rsfl")) return ResponseEntity.ok(hanTuService.getStockListRankRsfl());
-        if(type.equals("power")) return ResponseEntity.ok(hanTuService.getStockListRankPower());
-        if(type.equals("short")) return ResponseEntity.ok(hanTuService.getStockListRankShort());
+        if (type.equals("vol")) return ResponseEntity.ok(hanTuService.getStockListRankVol());
+        if (type.equals("rsfl")) return ResponseEntity.ok(hanTuService.getStockListRankRsfl());
+        if (type.equals("power")) return ResponseEntity.ok(hanTuService.getStockListRankPower());
+        if (type.equals("short")) return ResponseEntity.ok(hanTuService.getStockListRankShort());
         throw new RuntimeException("잘못된 타입");
     }
 
@@ -82,7 +82,6 @@ public class StockController {
     }
 
 
-
     @GetMapping("/{code}/opinion")
     public ResponseEntity<Mono<StockOpinionDto>> getStockOpinionByCode(@PathVariable String code) {
         log.info("국내주식 종목투자의견 조회 {}", code);
@@ -105,6 +104,12 @@ public class StockController {
     public ResponseEntity<DailyStockPriceResponse> getStockPriceDaily(@PathVariable String code) {
         log.info("주식 일자별 가격 {}", code);
         return ResponseEntity.ok(DailyStockPriceResponse.from(stockDailyPriceService.getStockDailyPriceByCode(code)));
+    }
+
+    @GetMapping("/{code}/stability")
+    public ResponseEntity<Mono<StockStabilityInfoDto>> getStockStability(@PathVariable String code) {
+        log.info("주식 안정성 검색 {}", code);
+        return ResponseEntity.ok(hanTuService.getStabilityInfo(code));
     }
 
     @GetMapping("/search")
