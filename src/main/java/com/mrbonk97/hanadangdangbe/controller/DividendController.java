@@ -4,6 +4,7 @@ import com.mrbonk97.hanadangdangbe.controller.request.DividendRecommendRequest;
 import com.mrbonk97.hanadangdangbe.dto.BoardMeetingDto;
 import com.mrbonk97.hanadangdangbe.dto.DividendCalendarDto;
 import com.mrbonk97.hanadangdangbe.dto.DividendRecommendResponseDto;
+import com.mrbonk97.hanadangdangbe.dto.StockOtherInfoDto;
 import com.mrbonk97.hanadangdangbe.model.DividendHistory;
 import com.mrbonk97.hanadangdangbe.model.DividendRank;
 import com.mrbonk97.hanadangdangbe.repository.DividendHistoryRepository;

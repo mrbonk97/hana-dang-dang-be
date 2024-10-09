@@ -81,6 +81,12 @@ public class StockController {
         return ResponseEntity.ok(stockTransaction);
     }
 
+    @PostMapping("/order")
+    public ResponseEntity<String> orderStock(@RequestBody StockBuyRequest stockBuyRequest) {
+        log.info("사용자가 주식을 매수 주문: 사용자 아이디: {}, 주식 코드: {}, 수량: {}, 가격: {}", stockBuyRequest.getAccountId(), stockBuyRequest.getStockCode(), stockBuyRequest.getQuantity(), stockBuyRequest.getPrice());
+        return ResponseEntity.ok(stockBuyRequest.getPrice() + "원에 " + stockBuyRequest.getQuantity() + "주 매수 주문");
+    }
+
 
     @GetMapping("/{code}/opinion")
     public ResponseEntity<Mono<StockOpinionDto>> getStockOpinionByCode(@PathVariable String code) {
@@ -110,6 +116,12 @@ public class StockController {
     public ResponseEntity<Mono<StockStabilityInfoDto>> getStockStability(@PathVariable String code) {
         log.info("주식 안정성 검색 {}", code);
         return ResponseEntity.ok(hanTuService.getStabilityInfo(code));
+    }
+
+    @GetMapping("/{code}/other")
+    public ResponseEntity<Mono<StockOtherInfoDto>> getOtherInfo(@PathVariable String code) {
+        log.info("종목 기타 정보 조회 {}", code);
+        return ResponseEntity.ok(hanTuService.getOtherInfo(code));
     }
 
     @GetMapping("/search")
