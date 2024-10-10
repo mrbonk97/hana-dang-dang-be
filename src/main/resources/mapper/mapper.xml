@@ -99,31 +99,25 @@
     </select>
 
     <select id="selectDividendRecommendList"
-            resultType="com.mrbonk97.hanadangdangbe.dto.DividendRecommendDto">
-        SELECT A.ID,
-               A.TITLE,
-               A.CODE,
-               TO_NUMBER(TO_CHAR(A.LOCK_DATE, 'MM')) AS MONTH,
-               A.DIVIDEND_TYPE,
-               A.AMOUNT,
-               A.PAY_DATE,
-               A.YIELD_PERCENTAGE,
-               B.SUM_AMOUNT,
-               B.SUM_PERCENTAGE
-        FROM TB_DIVIDEND_HISTORY A
-                 LEFT OUTER JOIN (SELECT CODE,
-                                         SUM(AMOUNT)           AS SUM_AMOUNT,
-                                         SUM(YIELD_PERCENTAGE) AS SUM_PERCENTAGE
-                                  FROM TB_DIVIDEND_HISTORY
-                                  WHERE LOCK_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
-                                    AND LOCK_DATE &lt;= TO_DATE('2023-12-31', 'YYYY-MM-DD')
-                                  GROUP BY CODE) B
-                                 ON A.CODE = B.CODE
-        WHERE SUM_AMOUNT IS NOT NULL
-          AND A.AMOUNT IS NOT NULL
-          AND A.AMOUNT > 0
-          AND SUM_AMOUNT > 0
-        ORDER BY SUM_PERCENTAGE DESC, MONTH
+            resultType="com.mrbonk97.hanadangdangbe.dto.selectDividendRecommendList">
+        with TBL1 as (select *
+                      from TB_DIVIDEND_HISTORY
+                      WHERE LOCK_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
+                        AND LOCK_DATE &lt;= TO_DATE('2023-12-31', 'YYYY-MM-DD')
+                        AND YIELD_PERCENTAGE IS NOT NULL
+                        AND YIELD_PERCENTAGE > 0),
+             TBL2 as (select CODE, MAX(YIELD_PERCENTAGE) as MAX_YIELD, SUM(AMOUNT) as SUM_AMOUNT
+                      from TB_DIVIDEND_HISTORY
+                      WHERE LOCK_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
+                        AND LOCK_DATE &lt;= TO_DATE('2023-12-31', 'YYYY-MM-DD')
+                        AND YIELD_PERCENTAGE IS NOT NULL
+                        AND YIELD_PERCENTAGE > 0
+                      GROUP BY CODE)
+        select Tbl1.*, EXTRACT(MONTH FROM TBL1.LOCK_DATE) AS month, TBL2.MAX_YIELD, TBL2.SUM_AMOUNT
+        from TBL1
+                 inner join TBL2
+                            ON TBL1.CODE = TBL2.CODE
+        ORDER BY TBL2.MAX_YIELD DESC
     </select>
 
     <select id="selectfindStockByName" resultType="com.mrbonk97.hanadangdangbe.dto.SearchStockDto">

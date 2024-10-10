@@ -12,14 +12,15 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DividendRecommendDto {
-    String id;
-    String title;
+    long id;
+    long amount;
     String code;
-    Integer month;
-    String dividendType;
+    Integer dividendType;
+    LocalDate lockDate;
     LocalDate payDate;
-    Long amount;
-    Double percentage;
+    String title;
+    int month;
+    Double yieldPercentage;
+    Double maxYield;
     Long sumAmount;
-    Long sumPercentage;
 }

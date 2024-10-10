@@ -12,5 +12,4 @@ import lombok.Setter;
 public class CoverMonth {
     private Integer month;
     private Long amount;
-    private Double percentage;
 }

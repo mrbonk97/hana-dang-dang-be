@@ -18,4 +18,8 @@ public class DividendRankService {
         return dividendRankRepository.findAllByOrderByIdAsc();
     }
 
+    public List<DividendRank> getDividendRank2() {
+        return dividendRankRepository.findAllByOrderByIdAsc();
+    }
+
 }
