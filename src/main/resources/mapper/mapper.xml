@@ -97,29 +97,6 @@
           AND CODE IS NOT NULL
         ORDER BY LOCK_DATE DESC
     </select>
-
-    <select id="selectDividendRecommendList"
-            resultType="com.mrbonk97.hanadangdangbe.dto.selectDividendRecommendList">
-        with TBL1 as (select *
-                      from TB_DIVIDEND_HISTORY
-                      WHERE LOCK_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
-                        AND LOCK_DATE &lt;= TO_DATE('2023-12-31', 'YYYY-MM-DD')
-                        AND YIELD_PERCENTAGE IS NOT NULL
-                        AND YIELD_PERCENTAGE > 0),
-             TBL2 as (select CODE, MAX(YIELD_PERCENTAGE) as MAX_YIELD, SUM(AMOUNT) as SUM_AMOUNT
-                      from TB_DIVIDEND_HISTORY
-                      WHERE LOCK_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
-                        AND LOCK_DATE &lt;= TO_DATE('2023-12-31', 'YYYY-MM-DD')
-                        AND YIELD_PERCENTAGE IS NOT NULL
-                        AND YIELD_PERCENTAGE > 0
-                      GROUP BY CODE)
-        select Tbl1.*, EXTRACT(MONTH FROM TBL1.LOCK_DATE) AS month, TBL2.MAX_YIELD, TBL2.SUM_AMOUNT
-        from TBL1
-                 inner join TBL2
-                            ON TBL1.CODE = TBL2.CODE
-        ORDER BY TBL2.MAX_YIELD DESC
-    </select>
-
     <select id="selectfindStockByName" resultType="com.mrbonk97.hanadangdangbe.dto.SearchStockDto">
         select A.PRDT_ABRV_NAME, A.CODE, D.STCK_CLPR, D.PRDY_VRSS
         from TB_STOCK_INFO A
