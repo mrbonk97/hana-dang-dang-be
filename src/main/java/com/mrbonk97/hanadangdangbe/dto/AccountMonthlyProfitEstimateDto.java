@@ -21,5 +21,5 @@ public class AccountMonthlyProfitEstimateDto {
     Long estimateProfit;
     Long amount;
     Double percentage;
-    LocalDate lockDate;
+    LocalDate payDate;
 }

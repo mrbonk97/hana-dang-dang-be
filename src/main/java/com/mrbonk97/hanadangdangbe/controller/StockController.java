@@ -1,6 +1,7 @@
 package com.mrbonk97.hanadangdangbe.controller;
 
 import com.mrbonk97.hanadangdangbe.controller.request.StockBuyRequest;
+import com.mrbonk97.hanadangdangbe.controller.request.StockListPriceRequest;
 import com.mrbonk97.hanadangdangbe.controller.response.DailyStockPriceResponse;
 import com.mrbonk97.hanadangdangbe.dto.*;
 import com.mrbonk97.hanadangdangbe.model.StockDailyPrice;
@@ -66,6 +67,16 @@ public class StockController {
     public ResponseEntity<Mono<StockPriceDto>> getStockInfoData(@PathVariable String code) {
         log.info("주식현재가 시세 조회 {}", code);
         return ResponseEntity.ok(hanTuService.getStockPrice(code));
+    }
+
+    @GetMapping("/list-price")
+    public ResponseEntity<List<StockDailyPrice>> getStockPriceList(@RequestParam(required = false) String c1,
+                                                                   @RequestParam(required = false) String c2,
+                                                                   @RequestParam(required = false) String c3,
+                                                                   @RequestParam(required = false) String c4,
+                                                                   @RequestParam(required = false) String c5) {
+        log.info("포트폴리오 조정 주식 목록 가격 조회 {} {} {} {} {}",c1,c2,c3,c4,c5);
+        return ResponseEntity.ok(stockDailyPriceService.getStockPriceList(c1,c2,c3,c4,c5));
     }
 
     @GetMapping("/{code}/info")

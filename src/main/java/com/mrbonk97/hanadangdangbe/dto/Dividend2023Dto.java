@@ -10,6 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Dividend2023Dto {
-    long[] months = new long[]{0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L};
-    double yieldPercentage = 0;
+    private String title;
+    private String code;
+    private long[] months = new long[]{0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L};
+    private double yieldPercentage = -1;
+    private long quantity = 0;
+    private long total = 0;
 }

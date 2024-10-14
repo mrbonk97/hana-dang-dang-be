@@ -21,25 +21,27 @@
     </select>
 
     <select id="selectAccountStockList" resultType="com.mrbonk97.hanadangdangbe.dto.AccountStockDto">
-        select B.CODE                                                     as code,
-               C.PRDT_ABRV_NAME                                           as title,
-               A.QUANTITY                                                 as quantity,
-               A.PURCHASE_PRICE                                           as price,
-               A.TOTAL_PRICE                                              as purchase_total_price,
-               B.STCK_CLPR                                                as current_price,
-               B.STCK_CLPR * A.QUANTITY                                   as current_total_price,
-               B.STCK_CLPR * A.QUANTITY - A.TOTAL_PRICE                   as profit,
-               (B.STCK_CLPR * A.QUANTITY - A.TOTAL_PRICE) / A.TOTAL_PRICE as profit_percentage
-        from TB_ACCOUNT_STOCK A
-                 inner join (select *
-                             from TB_STOCK_PRICE_DAILY
-                             where STCK_BSOP_DATE = (select MAX(STCK_BSOP_DATE) FROM TB_STOCK_PRICE_DAILY)) B
-                            on SUBSTR(A.STOCK_INFO_PDNO, 7) = B.CODE
-                 inner join TB_STOCK_INFO C
-                            on A.STOCK_INFO_PDNO = C.PDNO
-
-        where A.ACCOUNT_ACCOUNT_NO = #{accountNo}
-        order by current_total_price desc
+        WITH TBL1 AS (select code, MAX(STCK_BSOP_DATE) RECENT_DATE
+                      from TB_STOCK_PRICE_DAILY
+                      group by code)
+        SELECT TBL2.CODE                                                                    as code,
+               TBL3.PRDT_ABRV_NAME                                                          as title,
+               TBL4.QUANTITY                                                                as quantity,
+               TBL4.PURCHASE_PRICE                                                          as purchase_price,
+               TBL4.TOTAL_PRICE                                                             as purchase_total_price,
+               TBL2.STCK_CLPR                                                               as current_price,
+               TBL4.QUANTITY * TBL2.STCK_CLPR                                               AS CURRENT_TOTAL_PRICE,
+               TBL4.QUANTITY * TBL2.STCK_CLPR - TBL4.TOTAL_PRICE                            as profit,
+               (TBL4.QUANTITY * TBL2.STCK_CLPR - TBL4.TOTAL_PRICE) / TBL4.TOTAL_PRICE * 100 as profit_percentage
+        FROM TB_ACCOUNT_STOCK TBL4
+                 INNER JOIN TBL1
+                            ON SUBSTR(TBL4.STOCK_INFO_PDNO, 7) = TBL1.CODE
+                 INNER JOIN TB_STOCK_PRICE_DAILY TBL2
+                            ON TBL1.CODE = TBL2.CODE AND TBL1.RECENT_DATE = TBL2.STCK_BSOP_DATE
+                 INNER JOIN TB_STOCK_INFO TBL3
+                            ON TBL1.CODE = TBL3.CODE
+        WHERE TBL4.ACCOUNT_ACCOUNT_NO = #{accountNo}
+        ORDER BY TBL4.TOTAL_PRICE DESC
     </select>
 
 
@@ -80,22 +82,22 @@
                NVL(A.QUANTITY * B.AMOUNT, 0) AS ESTIMATE_PROFIT,
                NVL(B.AMOUNT, 0)              as amount,
                NVL(B.YIELD_PERCENTAGE, 0)    as percentage,
-               B.LOCK_DATE
+               B.PAY_DATE
         FROM TB_ACCOUNT_STOCK A
                  LEFT OUTER JOIN (SELECT CODE,
                                          TITLE,
                                          AMOUNT,
                                          YIELD_PERCENTAGE,
-                                         LOCK_DATE
+                                         PAY_DATE
                                   FROM (SELECT *
                                         FROM TB_DIVIDEND_HISTORY
-                                        WHERE LOCK_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
-                                          AND LOCK_DATE &lt;=
+                                        WHERE PAY_DATE &gt;= TO_DATE('2023-01-01', 'YYYY-MM-DD')
+                                          AND PAY_DATE &lt;=
                                               TO_DATE('2023-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS'))) B
                                  ON SUBSTR(A.STOCK_INFO_PDNO, 7) = B.CODE
         WHERE A.ACCOUNT_ACCOUNT_NO = #{accountNo}
           AND CODE IS NOT NULL
-        ORDER BY LOCK_DATE DESC
+        ORDER BY PAY_DATE DESC
     </select>
     <select id="selectfindStockByName" resultType="com.mrbonk97.hanadangdangbe.dto.SearchStockDto">
         select A.PRDT_ABRV_NAME, A.CODE, D.STCK_CLPR, D.PRDY_VRSS

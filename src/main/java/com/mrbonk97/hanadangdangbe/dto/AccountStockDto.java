@@ -13,7 +13,7 @@ public class AccountStockDto {
     private String code;
     private String title;
     private Long quantity;
-    private Long price;
+    private Long purchasePrice;
     private Long purchaseTotalPrice;
     private Long currentPrice;
     private Long currentTotalPrice;

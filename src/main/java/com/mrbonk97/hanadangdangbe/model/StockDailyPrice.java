@@ -33,4 +33,6 @@ public class StockDailyPrice {
     private String prdy_vrss_sign; // 전일 대비 부호
     private String prdy_vrss; // 전일 대비
     private String revl_issu_reas; // 재평가사유코드
+    @Transient
+    private String title;
 }

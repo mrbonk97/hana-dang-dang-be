@@ -12,4 +12,5 @@ public interface StockDailyPriceRepository extends JpaRepository<StockDailyPrice
     List<StockDailyPrice> findAllByCodeAndStckBsopDateAfterOrderByStckBsopDateAsc(String code, String stckBsopDate);
     List<StockDailyPrice> findAllByCode(String code);
     Optional<StockDailyPrice> findTopByCodeOrderByStckBsopDateDesc(String code);
+
 }

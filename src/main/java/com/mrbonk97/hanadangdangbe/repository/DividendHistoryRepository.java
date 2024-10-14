@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface DividendHistoryRepository extends JpaRepository<DividendHistory, Long> {
     List<DividendHistory> findAllByCodeOrderByLockDateDesc(String code);
-    List<DividendHistory> findAllByCodeAndLockDateBetweenOrderByLockDateDesc(String code, LocalDate startDate, LocalDate endDate);
+    List<DividendHistory> findAllByCodeAndPayDateAfterOrderByLockDateDesc(String code, LocalDate startDate);
 }
